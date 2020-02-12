@@ -1,0 +1,145 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Background</title>
+  <style>
+    body {
+      font-family: Fira Code;
+    }
+    .canvas__container {
+      width: 1280px;
+      height: 720px;
+      position: relative;
+    }
+  
+    .canvas__canvas {
+      height: 100%;
+      position: relative;
+      width: 100%;
+    }
+  
+    .canvas__mirror {
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 1;
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <span class="label">Datos del podcast:</span>
+  <input id="number" value="1" />
+  <input id="name" value="Nombre del Podcast" />
+  <input type="button" onClick="draw()" value="set" />
+  <hr/>
+  <div class="canvas__container">
+    <canvas id="cnvs" class="canvas__canvas"></canvas>
+    <img src="#" id="mirror" class="canvas__mirror" />
+  </div>
+  <a href="javascript:;" class="button" id="btn-download" download="youtubeIcon.png">Download</a>
+  <script>
+    const width = 1280
+    const height = 720
+    const cnvs = document.getElementById('cnvs')
+    const ctx = cnvs.getContext('2d')
+    const mirror = document.getElementById('mirror')
+    const button = document.getElementById('btn-download')
+
+    const addText = (ctx, text, size, face, x, y) => {
+      ctx.fillStyle = "#730067"
+      ctx.font = `700 ${size}px ${face}`
+      ctx.fillText(text, x + 5, y + 5)
+      ctx.fillStyle = "#FFFFFF"
+      ctx.fillText(text, x, y)
+    }
+    const addWaves = ctx => {
+      [... new Array(4)].forEach((i,k) => {
+        const alpha = (3.5 - k) / 10
+        const offset = 1000 - (k * 115)
+        ctx.beginPath()
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`
+        ctx.ellipse(width / 2, offset, width * 0.64, 380, 0, 0, 2 * Math.PI)
+        ctx.fill()
+      })
+    }
+    
+    button.addEventListener('click', function (e) {
+      const dataURL = cnvs.toDataURL('image/png')
+      button.href = dataURL
+    })
+
+    const loadImage = (uri, x, y) => {
+      return new Promise(resolve => {
+        var img1 = new Image()
+        img1.onload = function () {
+          ctx.drawImage(img1, 0, 0, 1995, 1995, x, y, 400, 400)
+          resolve()
+        }
+        img1.src = uri
+      })
+    }
+
+    const wrapText = (context, text, x, y, maxWidth, lineHeight) => {
+      var words = text.split(' ');
+      var line = '';
+
+      for(var n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = context.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+        context.fillText(line, x, y);
+        line = words[n] + ' ';
+        y += lineHeight;
+        }
+        else {
+        line = testLine;
+        }
+      }
+      context.fillText(line, x, y);
+    }
+
+    const draw = async () => {
+      const number = document.getElementById('number').value
+      const name = document.getElementById('name').value
+      cnvs.width = mirror.width = width
+      cnvs.height = mirror.height = height
+      cnvs.style.letterSpacing = 0
+      button.download = `${number} - youtube icon.png`
+
+      ctx.clearRect(0, 0, width, height)
+
+      const lingrad = ctx.createLinearGradient(0, 0, 0, 720)
+      lingrad.addColorStop(0.1, '#5A91FF')
+      lingrad.addColorStop(1, '#8555D3')
+      ctx.fillStyle = lingrad
+      ctx.fillRect(0, 0, 1280, 720)
+      addWaves(ctx)
+
+      await loadImage('/avatar_Zero.png', width - 400, height - 400)
+      await loadImage('/avatar_Swanros.png', 0, height - 400)
+
+
+      cnvs.style.letterSpacing = -2
+      ctx.textBaseline = "top"
+      ctx.font = '700 95px Fira Code'
+      ctx.textAlign = "center"
+      ctx.fillStyle = "#730067"
+      wrapText(ctx, name, 1280/2 + 20, 50, 1280, 110)
+      ctx.fillStyle = "#FFFFFF"
+      wrapText(ctx, name, 1280/2 + 20, 45, 1280, 110)
+
+      ctx.textBaseline = "bottom"
+      addText(ctx, `#${number}`, 250, 'Fira Code', 1280/2 + 20, 520)
+
+      var dataURL = cnvs.toDataURL('image/png')
+      mirror.src = dataURL
+    }
+    draw()
+  </script>
+</body>
+</html>
