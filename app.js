@@ -73,18 +73,18 @@ const draw = async () => {
 
   ctx.clearRect(0, 0, width, height)
 
-  const lingrad = ctx.createLinearGradient(0, 0, 0, 720)
+  const lingrad = ctx.createLinearGradient(0, 0, 0, height)
   lingrad.addColorStop(0.1, '#5A91FF')
   lingrad.addColorStop(1, '#8555D3')
   ctx.fillStyle = lingrad
-  ctx.fillRect(0, 0, 1280, 720)
+  ctx.fillRect(0, 0, width, height)
   addWaves(ctx)
 
   await loadImage('/thing1.png', 0, height - 400)
   await loadImage('/thing2.png', width - 400, height - 400)
 
-  addText(name, 100, 1280/2 + 20, 40)
-  addText(`#${number}`, 250, 1280/2 + 70, 260)
+  addText(name, 100, width/2 + 20, 40)
+  addText(`#${number}`, 250, width/2 + 70, 260)
 
   var dataURL = cnvs.toDataURL('image/png')
   mirror.src = dataURL
