@@ -80,8 +80,8 @@ const draw = async () => {
   ctx.fillRect(0, 0, width, height)
   addWaves(ctx)
 
-  await loadImage('/thing1.png', 0, height - 400)
-  await loadImage('/thing2.png', width - 400, height - 400)
+  await loadImage('/avatar_swanros.png', 0, height - 400)
+  await loadImage('/avatar_zero.png', width - 400, height - 400)
 
   addText(name, 100, width/2 + 20, 40)
   addText(`#${number}`, 250, width/2 + 70, 260)
