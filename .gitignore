@@ -1,3 +1,4 @@
 .DS_Store
 videoGenerator/*
 !videoGenerator/pod2vid.sh
+!videoGenerator/square_pod2vid.sh
