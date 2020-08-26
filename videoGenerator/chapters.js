@@ -7,15 +7,12 @@ const mp3 = fs.readdirSync(__dirname)
     return path.extname(file) === '.mp3'
   })[0]
 
+const fileName = path.basename(mp3, '.mp3')
+
 const call = spawn('ffprobe', [mp3])
 
 const events = []
-// call.stdout.on('data', chunk => {
-  // console.log(chunk.toString())
-  // events.push(chunk.toString())
-// })
 call.stderr.on('data', chunk => {
-  // console.log(chunk.toString())
   events.push(chunk.toString())
 })
 const z = i => `00${i}`.slice(-2)
@@ -37,6 +34,8 @@ call.on('close', _code => {
     }
     return ' ' + element.split(': ')[1] + '\n'
   }).join('')
-  console.log(chapters)
+  const output = path.join(__dirname, `${fileName}.txt`)
+  fs.writeFileSync(output, chapters)
+  console.log(output)
 })
 
