@@ -10,7 +10,7 @@ const addText = (text, size, x, y) => {
   ctx.textBaseline = "top"
   ctx.font = `700 ${size}px Fira Code`
   ctx.textAlign = "center"
-  ctx.fillStyle = "#730067"
+  ctx.fillStyle = "#2a2d40"
   wrapText(text, x + 5, y + 5, width, size * 1.1)
   ctx.fillStyle = "#FFFFFF"
   wrapText(text, x, y, width, size * 1.1)
@@ -66,6 +66,7 @@ const loadImage = (uri, x, y) => {
 const draw = async () => {
   const number = document.getElementById('number').value
   const name = document.getElementById('name').value
+  const numberVPos = document.getElementById('numbervpos').value
   cnvs.width = mirror.width = width
   cnvs.height = mirror.height = height
   cnvs.style.letterSpacing = 0
@@ -74,17 +75,17 @@ const draw = async () => {
   ctx.clearRect(0, 0, width, height)
 
   const lingrad = ctx.createLinearGradient(0, 0, 0, height)
-  lingrad.addColorStop(0.1, '#5A91FF')
-  lingrad.addColorStop(1, '#8555D3')
+  lingrad.addColorStop(0.1, '#2a2d50')
+  lingrad.addColorStop(1, '#191c3a')
   ctx.fillStyle = lingrad
   ctx.fillRect(0, 0, width, height)
-  addWaves(ctx)
+  // addWaves(ctx)
 
   await loadImage('/avatar_swanros.png', 0, height - 400)
   await loadImage('/avatar_zero.png', width - 400, height - 400)
 
   addText(name, 100, width/2 + 20, 40)
-  addText(`#${number}`, 250, width/2 + 70, 260)
+  addText(number, 250, width/2 + 70, numberVPos)
 
   var dataURL = cnvs.toDataURL('image/png')
   mirror.src = dataURL

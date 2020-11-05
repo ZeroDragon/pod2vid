@@ -2,6 +2,10 @@ const { spawn } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 
+const [,,offset = '00:00'] = process.argv
+const [ms, ss] = offset.split(':').map(tt => ~~tt)
+const extraSeconds = ss + ms * 60
+
 const mp3 = fs.readdirSync(__dirname)
   .filter(file => {
     return path.extname(file) === '.mp3'
@@ -15,6 +19,16 @@ const events = []
 call.stderr.on('data', chunk => {
   events.push(chunk.toString())
 })
+const secondsToTime = s => {
+  return [
+    Math.floor(s / 3600),
+    Math.floor(s / 60),
+    s % 60
+  ]
+    .map(t => t >= 60 ? t % 60 : t)
+    .map(t => z(t))
+    .join(':')
+}
 const z = i => `00${i}`.slice(-2)
 call.on('close', _code => {
   const lines = events
@@ -29,8 +43,9 @@ call.on('close', _code => {
   const chapters = raw.map((element, index) => {
     if (index % 2 === 0) {
       const time = element.split(' ')[3]
-      const seconds = ~~parseFloat(time.toString().slice(0, time.length - 1))
-      return z(Math.floor(seconds / 60)) + ':' + z(seconds % 60)
+      const seconds = ~~parseFloat(time.toString().slice(0, time.length - 1)) + extraSeconds
+      return secondsToTime(seconds)
+      // return z(Math.floor(seconds / 60)) + ':' + z(seconds % 60)
     }
     return ' ' + element.split(': ')[1] + '\n'
   }).join('')
